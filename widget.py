@@ -3,37 +3,62 @@ from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow,QDesktopWidget,QWi
 from PyQt5.QtCore import Qt,QTimer,QDateTime,QTime,QDate
 from PyQt5 import QtGui
 import datetime
+import json
 now = datetime.datetime.now()
 print(now)
 class MainWindow(QWidget):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.setWindowTitle("My Awesome App")
+        self.setWindowTitle("funkyD Widget")
+
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setStyleSheet("background:transparent")
-        flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        if(sys.platform=='win32'):
+            flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint|Qt.Tool|Qt.X11BypassWindowManagerHint)
+        else:
+            flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint)
         self.setWindowFlags(flags)
-        
+
+        #Load Configuration json file
+        self.loadConf()
+
         self.day()
         self.time()
-        # The `Qt` namespace has a lot of attributes to customise
-        # widgets. See: http://doc.qt.io/qt-5/qt.html
+        
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(self.label)
         self.layout().addWidget(self.label1)
-        self.center()
-        # Set the central widget of the Window. Widget will expand
-        # to take up all the space in the window by default.
-        # self.setCentralWidget(label)
-        # self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop)
+        # self.center()
+        self.customPostition()
+        
+        #Works with X11 enable system like linux and macOS
+        self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop)
+        self.setAttribute(Qt.WA_ShowWithoutActivating)
+
+    def loadConf(self):
+        file=open("package.json")
+        conf=json.load(file)
+        print(conf)
+        print(sys.argv)
     def center(self):
-        qr=self.frameGeometry()
-        cp=QDesktopWidget().availableGeometry().center()
-        print(cp)
-        qr.moveCenter(cp)
-        print(QDesktopWidget().availableGeometry().center())
-        self.move(QDesktopWidget().availableGeometry().center())
+        ag = QDesktopWidget().availableGeometry()
+        sg = QDesktopWidget().screenGeometry()
+
+        widget = self.geometry()
+        print(widget.width()/2)
+        x = ag.width()//2 -(widget.width()/4)
+        y = ag.height()//2 -(widget.height()/4)
+        self.move(x, y)
+    def customPostition(self):
+        ag = QDesktopWidget().availableGeometry()
+        sg = QDesktopWidget().screenGeometry()
+
+        widget = self.geometry()
+        print(widget.width()/2)
+        x = ag.width()//2 -(widget.width()/4)
+        y = ag.height()//2 -(widget.height()/4)
+        self.move(x,y-200)
     def day(self):
         self.label = QLabel(now.strftime("%A"))
         self.label.setObjectName("date")
@@ -64,6 +89,7 @@ class MainWindow(QWidget):
         self.timer.start()
     def setTime(self):
         self.label1.setText(QTime.currentTime().toString())
+        # self.label1.setText(sys.argv)
 app = QApplication(sys.argv)
 
 window = MainWindow()
