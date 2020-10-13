@@ -1,4 +1,4 @@
-const {app,BrowserWindow,remote,Tray,Menu} =require("electron");
+const {app,BrowserWindow,remote,Tray,Menu,ipcMain} =require("electron");
 var path = require('path')
 var iconpath = path.join(__dirname, 'user.png')
 const url=require("url");
@@ -6,6 +6,7 @@ const {spawn} = require('child_process');
 const cp=require('child_process')
 const { platform } = require("os");
 var AutoLaunch = require('auto-launch');
+const ipc=ipcMain;
 let child;
 let win;
 let appIcon;
@@ -59,6 +60,7 @@ function createWindow(){
     appIcon.on('click',()=>{
       win.show()
     })
+    win.webContents.openDevTools()
 }
 
 
@@ -96,3 +98,14 @@ if(process.platform=='linux'){
     child.kill('SIGTERM');
   })
 }
+
+
+ipc.on('refresh-widget',function(){
+  try{
+    child.kill('SIGTERM');
+  }
+  catch{
+    console.log('Not open');
+  }
+  child=spawn('python',['widget.py']);
+})

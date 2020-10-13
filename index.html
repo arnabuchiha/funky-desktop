@@ -2,14 +2,74 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>funkyD</title>
-        <link rel="stylesheet" href="./assets/styles/index.css">
+        <link rel="stylesheet" href="./assets/styles/index.css"><!-- CSS only -->
+        <link rel="stylesheet" href="./assets/styles/bootstrap.min.css" crossorigin="anonymous">
+
+        <script>require('bootstrap')</script>
     </head>
     <body>
-        <h1 id="day"></h1>
-        <h1 class="time" id="time"></h1>
+        
+        
+        <img id="logo" src="./logo.png"/>
+        <div class="multi-button">
+            <button>Load</button>
+            <button id="refresh">Refresh</button>
+            <button>Export</button>
+        </div>
+        <div class="row row-settings">
+            <div class="col-4">
+              <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Time</a>
+                <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Day</a>
+                <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Quote</a>
+              </div>
+            </div>
+            <div class="col-8 settings">
+              <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                    <form id="settingsForm">
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label for="exampleFormControlSelect1">Select font</label>
+                            <select name="fontName" class="form-control" id="fontsList">
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label for="exampleFormControlFile1">Custom Font</label>
+                            <input name="font_file" type="file" class="form-control-file" id="customFont">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="coordinates">Coordinates</label>
+                        <div class="row">
+                            <input name="x-coord" type="text" class="form-control col" id="x-coord" placeholder="x">
+                            <input name="y-coord" type="text" class="form-control col" id="y-coord" placeholder="y">
+                        </div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input name="hex_code" type="text" class="form-control col" id="hex_code" placeholder="HEX Code">
+                        
+                    </div>
+                    <div class="form-check">
+                        <input name="visibility" class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                        Show
+                        </label>
+                    </div>
+                    <button type="submit">Update</button>
+                </form>
+                </div>
+                
+                <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+                <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+              </div>
+            </div>
+          </div>
         <script>
             require("./index.js");
         </script>
