@@ -4,8 +4,8 @@ from PyQt5.QtCore import Qt,QTimer,QDateTime,QTime,QDate
 from PyQt5 import QtGui
 import datetime
 import json
+import os
 now = datetime.datetime.now()
-print(now)
 class MainWindow(QWidget):
 
     def __init__(self, *args, **kwargs):
@@ -37,10 +37,8 @@ class MainWindow(QWidget):
         self.setAttribute(Qt.WA_ShowWithoutActivating)
 
     def loadConf(self):
-        file=open("package.json")
-        conf=json.load(file)
-        print(conf)
-        print(sys.argv)
+        with open(os.path.join(sys.argv[1],"config.json")) as f:
+            self.confData=json.load(f)
     def center(self):
         ag = QDesktopWidget().availableGeometry()
         sg = QDesktopWidget().screenGeometry()
@@ -62,34 +60,45 @@ class MainWindow(QWidget):
     def day(self):
         self.label = QLabel(now.strftime("%A"))
         self.label.setObjectName("date")
+        color=self.confData["day"]["color"]
+        print(color)
         self.label.setStyleSheet("""
         QLabel#date {
             background-color: transparent;
-            color:white;
+            color:%s;
             }
-        """)
+        """%(color))
         font_db=QtGui.QFontDatabase()
-        font_id=font_db.addApplicationFont("./assets/fonts/Aquatico.otf")
-        your_ttf_font = QtGui.QFont("Aquatico",50)
+        print(self.confData["day"]["customFont"])
+        if self.confData["day"]["customFont"]==True:
+            font_id=font_db.addApplicationFont(self.confData["time"]["fontPath"])
+        your_ttf_font = QtGui.QFont(self.confData["time"]["fontName"],50)
         self.label.setFont(your_ttf_font)
     def time(self):
         self.label1=QLabel(now.strftime("%H:%M:%S"))
         self.label1.setObjectName("day")
+        color=self.confData["time"]["color"]
         self.label1.setStyleSheet("""
         QLabel#day{
             background-color: transparent;
-            color:white;
+            color:%s;
             font-size:50px
-        }""")
+        }"""%(color))
         self.label1.setAlignment(Qt.AlignCenter)
-
+        font_db=QtGui.QFontDatabase()
+        if self.confData["time"]["customFont"]==True:
+            font_id=font_db.addApplicationFont(self.confData["time"]["fontPath"])
+        your_ttf_font = QtGui.QFont(self.confData["time"]["fontName"],50)
+        self.label1.setFont(your_ttf_font)
         self.timer = QTimer(self)
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.setTime)
         self.timer.start()
     def setTime(self):
         self.label1.setText(QTime.currentTime().toString())
-        # self.label1.setText(sys.argv)
+        # self.label1.setText(sys.argv[1])
+
+
 app = QApplication(sys.argv)
 
 window = MainWindow()

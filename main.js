@@ -105,7 +105,7 @@ if(process.platform=='linux'){
   // cp.exec(".\\dist\\widget\\widget.exe");
   console.log(app.getPath("userData"))
   app.whenReady().then(createWindow)
-  child=spawn('python',['widget.py']);
+  child=spawn('python',['widget.py',confPath]);
     child.on('close', (code, signal) => {
       console.log(
         `child process terminated due to receipt of signal ${code}`);
@@ -128,7 +128,7 @@ ipc.on('refresh-widget',function(){
   catch{
     console.log('Not open');
   }
-  child=spawn('python',['widget.py']);
+  child=spawn('python',['widget.py',confPath]);
 })
 ipc.on('requestPath',(event,arg)=>{
   event.reply('sendPath',confPath);

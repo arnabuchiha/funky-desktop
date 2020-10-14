@@ -8,9 +8,15 @@ refreshBtn.addEventListener('click',function(){
 })
 const fontList = require('font-list');
 ipc.send('requestPath');
+let conf={
+    time:{},
+    day:{},
+    quote:{}
+}
 let configPath;
 ipc.on('sendPath',(event,arg)=>{
     configPath=arg;
+    conf=JSON.parse(fs.readFileSync(path.join(configPath,"config.json"),'utf-8'));
 })
 
 fontList.getFonts()
@@ -26,18 +32,33 @@ fontList.getFonts()
   .catch(err => {
     console.log(err)
   })
+let settingsId="time";
 console.log(document.getElementById(''))
-let conf={
-    time:{},
-    day:{},
-    quote:{}
+$('#list-tab a').on('click', function (e) {
+    e.preventDefault()
+    console.log(e.target.innerHTML)
+    settingsId=e.target.innerHTML.toLowerCase()
+})
+function isHexColor (hex) {
+    var RegExp = /^#[0-9A-F]{6}$/i
+    return RegExp.test(hex);
+
 }
-conf=JSON.parse(fs.readFileSync(path.join(configPath,"config.json"),'utf-8'));
 document.getElementById('settingsForm').addEventListener('submit',function(e){
     e.preventDefault()
-    
+    let color=document.getElementById('hex_code').value;
+    console.log(color)
+
+    //Validations
+    if(!isHexColor(color)){
+        let errorDiv=document.getElementById('error')
+        errorDiv.style.display="block";
+        errorDiv.innerHTML="Color Code invalid"
+        return;
+    }
+
+    document.getElementById('error').style.display="none";
     let filePath=null;let fontName=null
-    const color=document.getElementById('hex_code').value;
     try{
         filePath=document.getElementById('customFont').files[0].path;
     }
@@ -48,23 +69,24 @@ document.getElementById('settingsForm').addEventListener('submit',function(e){
         fontName=document.getElementById('fontsList').value;
     console.log(fontName);
     if(filePath!=null){
-        conf.time.fontName="CustomFont";
-        conf.time.customFont=true;
-        conf.time.fontPath=filePath;
-        conf.time.color=color;
-        fs.copyFileSync(filePath,path.join(configPath,"CustomPath."+path.parse(filePath).ext),function(err){
+        conf[settingsId].fontName=path.parse(filePath).name;
+        conf[settingsId].customFont=true;
+        conf[settingsId].fontPath=path.join(configPath,"CustomPath"+settingsId+path.parse(filePath).ext);
+        conf[settingsId].color=color;
+        fs.copyFileSync(filePath,path.join(configPath,"CustomPath"+settingsId+path.parse(filePath).ext),function(err){
             if (err) { 
               console.error(err); 
             } 
         })
     }
     else{
-        conf.time.fontName=fontName;
-        conf.time.customFont=false;
-        conf.time.fontPath=null;
-        conf.time.color="#ffff";
+        conf[settingsId].fontName=fontName;
+        conf[settingsId].customFont=false;
+        conf[settingsId].fontPath=null;
+        conf[settingsId].color=color;
     }
     console.log(conf);
     
     fs.writeFileSync(path.join(configPath,"config.json"),JSON.stringify(conf));
+    ipc.send('refresh-widget');
 })
