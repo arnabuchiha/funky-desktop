@@ -1,0 +1,20 @@
+{
+    "time":{
+        "fontName":"Deja Vu",
+        "customFont":false,
+        "fontPath":null,
+        "color":"#ffff"
+    },
+    "day":{
+        "fontName":"Deja Vu",
+        "customFont":false,
+        "fontPath":null,
+        "color":"#ffff"
+    },
+    "quote":{
+        "fontName":"Deja Vu",
+        "customFont":false,
+        "fontPath":null,
+        "color":"#ffff"
+    }
+}

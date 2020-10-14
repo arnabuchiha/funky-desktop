@@ -5,7 +5,9 @@ const url=require("url");
 const {spawn} = require('child_process');
 const cp=require('child_process')
 const { platform } = require("os");
+const fs=require('fs')
 var AutoLaunch = require('auto-launch');
+const { event } = require("jquery");
 const ipc=ipcMain;
 let child;
 let win;
@@ -62,8 +64,27 @@ function createWindow(){
     })
     win.webContents.openDevTools()
 }
-
-
+const confPath=path.join(app.getPath("userData"),"config");
+try{
+  if(fs.existsSync(confPath)){
+    console.log("Exists!!")
+  }
+  else{
+    fs.mkdirSync(confPath,(err)=>{
+      if (err) { 
+        console.error(err); 
+      } 
+    })
+    fs.copyFileSync("default_config.json",path.join(confPath,"config.json"),function(err){
+      if (err) { 
+        console.error(err); 
+      } 
+    })
+  }
+}
+catch(err){
+  console.error(err);
+}
 //Add App to StartUp
 var funkyDLauncher=new AutoLaunch({
   name:'funkyD',
@@ -109,3 +130,11 @@ ipc.on('refresh-widget',function(){
   }
   child=spawn('python',['widget.py']);
 })
+ipc.on('requestPath',(event,arg)=>{
+  event.reply('sendPath',confPath);
+})
+var cmd = process.argv[1];
+
+if (cmd == '--squirrel-firstrun') {
+    console.log("First time");
+}

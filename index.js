@@ -1,19 +1,17 @@
 const electron =require('electron')
-const { promisify } = require('util');
-const { pipeline } = require('stream');
-const {
-  createReadStream,
-  createWriteStream
-} = require('fs');
-const pipe = promisify(pipeline);
-const { createGzip } = require('zlib');
-
+const path=require('path')
+const fs=require('fs')
 const ipc=electron.ipcRenderer;
 const refreshBtn=document.getElementById("refresh");
 refreshBtn.addEventListener('click',function(){
     ipc.send('refresh-widget');
 })
 const fontList = require('font-list');
+ipc.send('requestPath');
+let configPath;
+ipc.on('sendPath',(event,arg)=>{
+    configPath=arg;
+})
 
 fontList.getFonts()
   .then(fonts => {
@@ -28,25 +26,18 @@ fontList.getFonts()
   .catch(err => {
     console.log(err)
   })
-// const clocksettings=document.getElementById("clock");
-// console.log(clocksettings)
-// clocksettings.addEventListener('click',function(){
-//     clocksettings.className="select";
-// })
-async function do_gzip(input, output) {
-    const gzip = createGzip();
-    const source = createReadStream(input);
-    const destination = createWriteStream(output);
-    await pipe(source, gzip, destination);
-  }
+console.log(document.getElementById(''))
+let conf={
+    time:{},
+    day:{},
+    quote:{}
+}
+conf=JSON.parse(fs.readFileSync(path.join(configPath,"config.json"),'utf-8'));
 document.getElementById('settingsForm').addEventListener('submit',function(e){
     e.preventDefault()
-    let conf={
-        time:{},
-        day:{},
-        quote:{}
-    }
+    
     let filePath=null;let fontName=null
+    const color=document.getElementById('hex_code').value;
     try{
         filePath=document.getElementById('customFont').files[0].path;
     }
@@ -57,14 +48,15 @@ document.getElementById('settingsForm').addEventListener('submit',function(e){
         fontName=document.getElementById('fontsList').value;
     console.log(fontName);
     if(filePath!=null){
-        do_gzip(filePath, 'input.txt.gz')
-        .catch((err) => {
-            console.error('An error occurred:', err);
-        });
-        conf.time.fontName=null;
+        conf.time.fontName="CustomFont";
         conf.time.customFont=true;
         conf.time.fontPath=filePath;
-        conf.time.color="#ffff";
+        conf.time.color=color;
+        fs.copyFileSync(filePath,path.join(configPath,"CustomPath."+path.parse(filePath).ext),function(err){
+            if (err) { 
+              console.error(err); 
+            } 
+        })
     }
     else{
         conf.time.fontName=fontName;
@@ -73,4 +65,6 @@ document.getElementById('settingsForm').addEventListener('submit',function(e){
         conf.time.color="#ffff";
     }
     console.log(conf);
+    
+    fs.writeFileSync(path.join(configPath,"config.json"),JSON.stringify(conf));
 })
