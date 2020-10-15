@@ -1,7 +1,8 @@
 <a href="https://algorithm-visualizer.vercel.app/">
-    <img src="./logo.png" alt="funkyD" title="funkyD-Desktop Customizer" align="left" height="70" />
+<p align="center">
+    <img src="./logo.png" alt="funkyD" title="funkyD-Desktop Customizer" height="70" />
+    </p>
 </a>
-<br/><br/>
 
 ##   
 
