@@ -1,42 +1,44 @@
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtWebKitWidgets import *
-from PyQt5.QtGui import *
-import sip
-import sys
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebChannel import QWebChannel
+
+from PyQt5.QtCore import QObject, pyqtSlot, QUrl, QVariant
+
 import os
-app = QApplication([])
- 
-# And a window
-win = QWidget()
-win.setWindowTitle('QWebView Interactive Demo')
- 
-# And give it a layout
-layout = QVBoxLayout()
-win.setLayout(layout)
- 
-# Create and fill a QWebView
-view = QWebView()
-file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "index.html"))
-local_url = QUrl.fromLocalFile(file_path)
-view.load(local_url)
- 
-# A button to call our JavaScript
-button = QPushButton('Set Full Name')
- 
-# Interact with the HTML page by calling the completeAndReturnName
-# function; print its return value to the console
-def complete_name():
-    frame = view.page().mainFrame()
-    print(frame.evaluateJavaScript('completeAndReturnName();'))
- 
-# Connect 'complete_name' to the button's 'clicked' signal
-button.clicked.connect(complete_name)
- 
-# Add the QWebView and button to the layout
-layout.addWidget(view)
-layout.addWidget(button)
- 
-# Show the window and run the app
-win.show()
-app.exec_()
+
+class CallHandler(QObject):
+
+
+    @pyqtSlot(result=QVariant)
+    def test(self):
+        print('call received')
+        return QVariant({"abc": "def", "ab": 22})
+    
+    # take an argument from javascript - JS:  handler.test1('hello!')
+    @pyqtSlot(QVariant, result=QVariant)
+    def test1(self, args):
+      print('i got')
+      print(args)
+      return "ok"
+
+class WebView(QWebEngineView):
+
+    def __init__(self):
+        super(WebView, self).__init__()
+
+        self.channel = QWebChannel()
+        self.handler = CallHandler()
+        self.channel.registerObject('handler', self.handler)
+        self.page().setWebChannel(self.channel)
+
+        file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "index.html"))
+        local_url = QUrl.fromLocalFile(file_path)
+
+        self.load(local_url)
+
+
+if __name__ == "__main__":
+  app = QApplication([])
+  view = WebView()
+  view.show()
+  app.exec_()

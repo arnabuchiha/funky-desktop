@@ -3,18 +3,48 @@
         "fontName":"Deja Vu",
         "customFont":false,
         "fontPath":null,
-        "color":"#ffff"
+        "color":"#ffffff",
+        "fontSize":"50",
+        "coordinate":{
+            "default":true,
+            "x":null,
+            "y":null
+        }
     },
     "day":{
         "fontName":"Deja Vu",
         "customFont":false,
         "fontPath":null,
-        "color":"#ffff"
+        "color":"#ffffff",
+        "fontSize":"50",
+        "coordinate":{
+            "default":true,
+            "x":null,
+            "y":null
+        }
     },
     "quote":{
         "fontName":"Deja Vu",
         "customFont":false,
         "fontPath":null,
-        "color":"#ffff"
+        "color":"#ffffff",
+        "fontSize":"50",
+        "coordinate":{
+            "default":true,
+            "x":null,
+            "y":null
+        }
+    },
+    "cpu":{
+        "fontName":"Deja Vu",
+        "customFont":false,
+        "fontPath":null,
+        "color":"#ffffff",
+        "fontSize":"50",
+        "coordinate":{
+            "default":true,
+            "x":null,
+            "y":null
+        }
     }
 }

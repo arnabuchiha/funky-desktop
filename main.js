@@ -133,8 +133,3 @@ ipc.on('refresh-widget',function(){
 ipc.on('requestPath',(event,arg)=>{
   event.reply('sendPath',confPath);
 })
-var cmd = process.argv[1];
-
-if (cmd == '--squirrel-firstrun') {
-    console.log("First time");
-}

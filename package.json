@@ -10,7 +10,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
+  "devDependencies": {
+    "standard": "^14.3.4"
+  },
   "dependencies": {
     "auto-launch": "^5.0.5",
     "bootstrap": "^4.5.2",
