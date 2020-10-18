@@ -81,8 +81,8 @@ class MainWindow(QWidget):
         """%(color,fontSize))
         font_db=QtGui.QFontDatabase()
         if self.confData["day"]["customFont"]==True:
-            font_id=font_db.addApplicationFont(self.confData["time"]["fontPath"])
-        your_ttf_font = QtGui.QFont(self.confData["time"]["fontName"],fontSize)
+            font_id=font_db.addApplicationFont(self.confData["day"]["fontPath"])
+        your_ttf_font = QtGui.QFont(self.confData["day"]["fontName"],fontSize)
         self.dayLabel.setFont(your_ttf_font)
         # self.dayLabel.setGeometry(1000,1000,30,80)
         self.dayLabel.setAlignment(Qt.AlignCenter)

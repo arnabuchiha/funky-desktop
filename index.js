@@ -2,6 +2,9 @@ const electron = require('electron')
 const path = require('path')
 const fs = require('fs')
 const ipc = electron.ipcRenderer
+const fontkit=require('fontkit');
+
+
 const refreshBtn = document.getElementById('refresh')
 refreshBtn.addEventListener('click', function () {
   ipc.send('refresh-widget')
@@ -67,7 +70,8 @@ document.getElementById('settingsForm').addEventListener('submit', function (e) 
   if (filePath == null) { fontName = document.getElementById('fontsList').value }
   console.log(fontName)
   if (filePath != null) {
-    conf[settingsId].fontName = path.parse(filePath).name
+    var font = fontkit.openSync(filePath);
+    conf[settingsId].fontName = font.fullName
     conf[settingsId].customFont = true
     conf[settingsId].fontPath = path.join(configPath, 'CustomPath' + settingsId + path.parse(filePath).ext)
     fs.copyFileSync(filePath, path.join(configPath, 'CustomPath' + settingsId + path.parse(filePath).ext), function (err) {
