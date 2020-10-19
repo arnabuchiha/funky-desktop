@@ -29,12 +29,12 @@ class MainWindow(QWidget):
 
         self.day()
         self.time()
-        self.cpu_usage()
+        # self.cpu_usage()
 
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(self.dayLabel)
         self.layout().addWidget(self.timeLabel)
-        self.layout().addWidget(self.cpuLabel)
+        # self.layout().addWidget(self.cpuLabel)
         self.center()
         # self.customPostition()
         
@@ -90,7 +90,7 @@ class MainWindow(QWidget):
         # self.customPostition(self.dayLabel)
         # self.dayLabel.move((self.width//2)-200,self.height//2)
     def time(self):
-        self.timeLabel=QLabel(now.strftime("%H:%M:%S"),self)
+        self.timeLabel=QLabel(now.strftime("%I:%M:%S"),self)
         self.timeLabel.setObjectName("time")
         color=self.confData["time"]["color"]
         fontSize=self.confData["time"]["fontSize"]
@@ -134,8 +134,8 @@ class MainWindow(QWidget):
         # self.customPostition(self.cpuLabel,-200)
         
     def setTime(self):
-        self.timeLabel.setText(QTime.currentTime().toString())
-        self.cpuLabel.setText(str(psutil.cpu_percent())+"%")
+        self.timeLabel.setText(now.strftime("%I:%M %p"))
+        # self.cpuLabel.setText(str(psutil.cpu_percent())+"%")
         # self.timeLabel.setText(sys.argv[1])
 
 app = QApplication(sys.argv)

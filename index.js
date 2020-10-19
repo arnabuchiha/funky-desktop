@@ -22,19 +22,26 @@ ipc.on('sendPath', (event, arg) => {
   conf = JSON.parse(fs.readFileSync(path.join(configPath, 'config.json'), 'utf-8'))
 })
 
-fontList.getFonts()
+async function getFonts(){
+  var temp = document.getElementById('fontsList')
+  fontList.getFonts()
   .then(fonts => {
+    // fonts=fonts.slice(240)
     fonts.forEach(element => {
-      var temp = document.getElementById('fontsList')
-      var option = document.createElement('option')
-      option.text = element
+      element=element.replace(/^"(.*)"$/, '$1');
+      console.log(element)
+      let option = document.createElement('option')
+      // option.style.fontFamily=element
+      option.innerHTML =element
+      
       temp.add(option)
     })
   })
   .catch(err => {
     console.log(err)
   })
-
+}
+getFonts()
 // Id of List item currently active
 let settingsId = 'time'
 $('#list-tab a').on('click', function (e) {
