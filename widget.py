@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow,QDesktopWidget,QWidget,QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow,QDesktopWidget,QWidget,QVBoxLayout,QGridLayout,QLayout
 from PyQt5.QtCore import Qt,QTimer,QDateTime,QTime,QDate,QRectF
 from PyQt5 import QtGui
 import datetime
@@ -12,12 +12,12 @@ class MainWindow(QWidget):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setWindowTitle("funkyD Widget")
-        # self.width=QDesktopWidget().availableGeometry().width()
-        # self.height=QDesktopWidget().screenGeometry().height()
-        # self.setFixedWidth(self.width)
-        # self.setFixedHeight(self.height)
+        self.width=QDesktopWidget().availableGeometry().width()
+        self.height=QDesktopWidget().screenGeometry().height()
+        self.setFixedWidth(self.width)
+        self.setFixedHeight(self.height)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setStyleSheet("background:transparent")
+        self.setStyleSheet("background:transparent;")
         if(sys.platform=='win32'):
             flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint|Qt.Tool|Qt.X11BypassWindowManagerHint)
         else:
@@ -26,16 +26,19 @@ class MainWindow(QWidget):
 
         #Load Configuration json file
         self.loadConf()
-
+        self.betas=[]
         self.day()
+        self.greeting()
         self.time()
+        print(self.betas)
         # self.cpu_usage()
 
-        self.setLayout(QVBoxLayout())
-        self.layout().addWidget(self.dayLabel)
-        self.layout().addWidget(self.timeLabel)
+        # self.setLayout(QGridLayout())
+        # self.layout().addWidget(self.dayLabel,0,0)
+        # self.layout().addWidget(self.timeLabel,1,0)
         # self.layout().addWidget(self.cpuLabel)
-        self.center()
+        # self.center()
+        # self.layout().setSizeConstraint(QLayout.SetMinimumSize)
         # self.customPostition()
         
         #Works with X11 enable system like linux and macOS
@@ -50,87 +53,89 @@ class MainWindow(QWidget):
     def center(self):
         ag = QDesktopWidget().availableGeometry()
         sg = QDesktopWidget().screenGeometry()
-
+        
         widget = self.geometry()
         print(widget.width()/2)
         x = ag.width()//2 -(widget.width()//2)
         y = ag.height()//2 -(widget.height()//2)
         self.move(x, y)
+
+    # Find QLabel dimensions    
+    def labelWidth(self,label):
+        return label.fontMetrics().boundingRect(label.text()).width()
+    def labelHeight(self,label):
+        return label.fontMetrics().boundingRect(label.text()).height()
+
     def customPostition(self,label,beta=0):
         ag = QDesktopWidget().availableGeometry()
         sg = QDesktopWidget().screenGeometry()
-        widgetWidth=label.fontMetrics().boundingRect(label.text()).width()
-        widgetHeight=label.fontMetrics().boundingRect(label.text()).height()
-        print(widgetWidth)
-        x = ag.width()//2-widgetWidth//2
+        widgetWidth=self.labelWidth(label)
+        widgetHeight=self.labelHeight(label)
+    
+        x = ag.width()//2-(widgetWidth//2)
         y = (sg.height()-widgetHeight)//2-beta
         label.move(x,y)
-    def day(self):
-        self.dayLabel = QLabel(now.strftime("%A"),self)
-        self.dayLabel.setObjectName("day")
-        color=self.confData["day"]["color"]
-        fontSize=self.confData["day"]["fontSize"]
+
+    # Function for Styling the labels
+    def labelStyles(self,label,id):
+        color=self.confData[id]["color"]
+        fontSize=self.confData[id]["fontSize"]
         fontSize=int(fontSize)
-        self.dayLabel.setStyleSheet("""
-        QLabel#day{
+        label.setStyleSheet("""
+        QLabel#%s{
             background-color: transparent;
             color:%s;
             font-size:%dpx;
             alignment:center;
             }
-        """%(color,fontSize))
+        """%(id,color,fontSize))
         font_db=QtGui.QFontDatabase()
-        if self.confData["day"]["customFont"]==True:
-            font_id=font_db.addApplicationFont(self.confData["day"]["fontPath"])
-        your_ttf_font = QtGui.QFont(self.confData["day"]["fontName"],fontSize)
-        self.dayLabel.setFont(your_ttf_font)
-        # self.dayLabel.setGeometry(1000,1000,30,80)
-        self.dayLabel.setAlignment(Qt.AlignCenter)
-        print(self.dayLabel.fontMetrics().boundingRect(self.dayLabel.text()).width())
-        # self.customPostition(self.dayLabel)
+        if self.confData[id]["customFont"]==True:
+            font_id=font_db.addApplicationFont(self.confData[id]["fontPath"])
+        your_ttf_font = QtGui.QFont(self.confData[id]["fontName"],fontSize)
+        label.setFont(your_ttf_font)
+        label.adjustSize()
+
+    def greeting(self):
+        greeting=""
+        if now.hour < 12:
+            greeting='Good morning.'
+        elif 12 <= now.hour < 18:
+            greeting='Good afternoon.'
+        else:
+            greeting='Good evening.'
+        self.greetingLabel=QLabel(greeting,self)
+        self.greetingLabel.setObjectName("greeting")
+        self.labelStyles(self.greetingLabel,"greeting")
+        height=self.labelHeight(self.greetingLabel)
+        beta=self.betas[-1]+20
+        self.customPostition(self.greetingLabel,-beta)
+        self.betas.append(height/2+beta)
+    
+    def day(self):
+        self.dayLabel = QLabel(now.strftime("%A"),self)
+        self.dayLabel.setObjectName("day")
+        self.labelStyles(self.dayLabel,"day")
+        
+        self.customPostition(self.dayLabel)
+        self.betas.append(self.labelHeight(self.dayLabel)/2)
         # self.dayLabel.move((self.width//2)-200,self.height//2)
     def time(self):
         self.timeLabel=QLabel(now.strftime("%I:%M:%S"),self)
         self.timeLabel.setObjectName("time")
-        color=self.confData["time"]["color"]
-        fontSize=self.confData["time"]["fontSize"]
-        fontSize=int(fontSize)
-        self.timeLabel.setStyleSheet("""
-        QLabel#time{
-            background-color: transparent;
-            color:%s;
-            font-size:%dpx;
-        }"""%(color,fontSize))
-        self.timeLabel.setAlignment(Qt.AlignCenter)
-        font_db=QtGui.QFontDatabase()
-        if self.confData["time"]["customFont"]==True:
-            font_id=font_db.addApplicationFont(self.confData["time"]["fontPath"])
-        your_ttf_font = QtGui.QFont(self.confData["time"]["fontName"],fontSize)
-        self.timeLabel.setFont(your_ttf_font)
+        self.labelStyles(self.timeLabel,"time")
         self.timer = QTimer(self)
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.setTime)
         self.timer.start()
-        # self.customPostition(self.timeLabel,-100)
+        height=self.labelHeight(self.timeLabel)
+        beta=self.betas[-1]+30
+        self.customPostition(self.timeLabel,-beta)
+        self.betas.append(height/2+beta)
     def cpu_usage(self):
         self.cpuLabel=QLabel(str(psutil.cpu_percent())+"%",self)
         self.cpuLabel.setObjectName("cpu")
-        color=self.confData["cpu"]["color"]
-        fontSize=self.confData["cpu"]["fontSize"]
-        fontSize=int(fontSize)
-        print(fontSize)
-        self.cpuLabel.setStyleSheet("""
-        QLabel#cpu{
-            background-color: transparent;
-            color:%s;
-            font-size:%dpx;
-        }"""%(color,fontSize))
-        self.cpuLabel.setAlignment(Qt.AlignCenter)
-        font_db=QtGui.QFontDatabase()
-        if self.confData["cpu"]["customFont"]==True:
-            font_id=font_db.addApplicationFont(self.confData["cpu"]["fontPath"])
-        your_ttf_font = QtGui.QFont(self.confData["cpu"]["fontName"],fontSize)
-        self.cpuLabel.setFont(your_ttf_font)
+        self.labelStyles(self.cpuLabel,"cpu")
         # self.customPostition(self.cpuLabel,-200)
         
     def setTime(self):

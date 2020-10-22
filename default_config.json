@@ -35,7 +35,7 @@
             "y":null
         }
     },
-    "cpu":{
+    "greeting":{
         "fontName":"Deja Vu",
         "customFont":false,
         "fontPath":null,
