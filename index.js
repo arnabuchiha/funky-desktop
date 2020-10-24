@@ -20,6 +20,7 @@ let configPath
 ipc.on('sendPath', (event, arg) => {
   configPath = arg
   conf = JSON.parse(fs.readFileSync(path.join(configPath, 'config.json'), 'utf-8'))
+  loadData("time")
 })
 
 async function getFonts(){
@@ -29,7 +30,6 @@ async function getFonts(){
     // fonts=fonts.slice(240)
     fonts.forEach(element => {
       element=element.replace(/^"(.*)"$/, '$1');
-      console.log(element)
       let option = document.createElement('option')
       // option.style.fontFamily=element
       option.innerHTML =element
@@ -42,30 +42,26 @@ async function getFonts(){
   })
 }
 getFonts()
+
 // Id of List item currently active
 let settingsId = 'time'
+
 $('#list-tab a').on('click', function (e) {
   e.preventDefault()
-  console.log(e.target.innerHTML)
   settingsId = e.target.innerHTML.toLowerCase()
+  loadData(settingsId)
 })
 
-function isHexColor (hex) {
-  var RegExp = /^#[0-9A-F]{6}$/i
-  return RegExp.test(hex)
+function loadData(id){
+  document.getElementById('hex_code').value=conf[id].color;
+  document.getElementById('font_size').value=conf[id].fontSize;
+  console.log(conf[id].color);
 }
+
 document.getElementById('settingsForm').addEventListener('submit', function (e) {
   e.preventDefault()
   const color = document.getElementById('hex_code').value
   const fontSize = parseInt(document.getElementById('font_size').value)
-
-  // Validations
-  if (!isHexColor(color)) {
-    const errorDiv = document.getElementById('error')
-    errorDiv.style.display = 'block'
-    errorDiv.innerHTML = 'Color Code invalid'
-    return
-  }
 
   document.getElementById('error').style.display = 'none'
   let filePath = null; let fontName = null
@@ -75,7 +71,6 @@ document.getElementById('settingsForm').addEventListener('submit', function (e) 
     filePath = null
   }
   if (filePath == null) { fontName = document.getElementById('fontsList').value }
-  console.log(fontName)
   if (filePath != null) {
     var font = fontkit.openSync(filePath);
     conf[settingsId].fontName = font.fullName

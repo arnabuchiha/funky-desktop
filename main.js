@@ -15,7 +15,7 @@ let appIcon;
 function createWindow(){
     win=new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 650,
         frame:true,
         // transparent:true,
         title:"funkyD",

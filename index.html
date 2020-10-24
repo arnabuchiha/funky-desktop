@@ -31,8 +31,33 @@
             <div class="col-8 settings">
               <div class="tab-content" id="nav-tabContent">
                 <form id="settingsForm">
-                    <div class="row">
-                        <div class="form-group col-6">
+                    <!-- <div class="row"> -->
+                        <div class="row mt-5 mb-5">
+                            <h1 class="col text-center" id="preview-text">Day</h1>
+                        </div>
+                        <div class="container">
+                        <div class="row">
+                                <div class="col btn-group dropup">
+                                    <button style="height: fit-content;" onclick="event.preventDefault();" class="dropdown-toggle w-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Font</button>
+                                    <div class="dropdown-menu">
+                                        <select name="fontName" class="form-control dropdown-item" id="fontsList">
+                                        </select>
+                                        <input name="font_file" type="file" class="form-control-file dropdown-item" id="customFont">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <button class="w-100" onclick="event.preventDefault();document.getElementById('hex_code').click();">Color</button>
+                                    <input type="color" id="hex_code" onchange="clickColor(0, -1, -1, 5)" value="#ffffff" style="width:25%;visibility: hidden;">
+                                </div>
+                                <div class="col">
+                                    <button class="w-100">Position</button>
+                                </div>
+                                <div class="col">
+                                    <button class="w-100 update-btn" type="submit">Update</button>
+                                </div>
+                        </div>
+                    </div>
+                        <!-- <div class="form-group col-6">
                             <label for="exampleFormControlSelect1">Select font</label>
                             <select name="fontName" class="form-control" id="fontsList">
                             </select>
@@ -42,18 +67,17 @@
                             <input name="font_file" type="file" class="form-control-file" id="customFont">
                         </div>
                     </div>
-                    <!-- <div class="form-group">
+                    <div class="form-group">
                         <label for="coordinates">Coordinates</label>
                         <div class="row">
                             <input name="x-coord" type="text" class="form-control col" id="x-coord" placeholder="x">
                             <input name="y-coord" type="text" class="form-control col" id="y-coord" placeholder="y">
                         </div>
                         
-                    </div> -->
+                    </div>
                     <div class="form-group">
                         <label for="color">Color</label>
-                        <input name="hex_code" type="text" class="form-control col" id="hex_code" placeholder="HEX Code">
-                        
+                        <input type="color" id="hex_code" onchange="clickColor(0, -1, -1, 5)" value="#ffffff" style="width:25%;">                        
                     </div>
                     <div class="form-group">
                         <label for="color">Font Size</label>
@@ -68,8 +92,8 @@
                     </div>
                     <div class="alert alert-danger" style="display: none;" id="error">
                         
-                    </div>
-                    <button type="submit">Update</button>
+                    </div> -->
+                    
                 </form>
               </div>
             </div>

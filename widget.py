@@ -44,6 +44,7 @@ class MainWindow(QWidget):
         #Works with X11 enable system like linux and macOS
         # self.setAttribute(Qt.WindowTransparentForInput)
         self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop)
+        #Qt.WA_NoSystemBackground|Qt.AA_EnableHighDpiScaling
         
         # self.setAttribute(Qt.WA_ShowWithoutActivating)
 
@@ -83,7 +84,7 @@ class MainWindow(QWidget):
         fontSize=int(fontSize)
         label.setStyleSheet("""
         QLabel#%s{
-            background-color: transparent;
+            background-color: black;
             color:%s;
             font-size:%dpx;
             alignment:center;
@@ -140,6 +141,7 @@ class MainWindow(QWidget):
         
     def setTime(self):
         self.timeLabel.setText(now.strftime("%I:%M %p"))
+        self.timeLabel.adjustSize()
         # self.cpuLabel.setText(str(psutil.cpu_percent())+"%")
         # self.timeLabel.setText(sys.argv[1])
 

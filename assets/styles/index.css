@@ -100,3 +100,17 @@ body{
     font-size: 1.5rem;
     font-family: var(--font-family);
 }
+#settingsForm button{
+    background-color: var(--color-primary) ;
+    color:var(--color-secondary);
+    border-radius: 5px;
+    padding:4px;
+    transition: all .2s ease-in-out;
+}
+#settingsForm button:hover{
+    transform: scale(1.2);
+}
+.update-btn{
+    background-color: var(--color-secondary)!important ;
+    color:var(--color-primary)!important;
+}
