@@ -3,8 +3,6 @@ const path = require('path')
 const fs = require('fs')
 const ipc = electron.ipcRenderer
 const fontkit=require('fontkit');
-
-
 const refreshBtn = document.getElementById('refresh')
 refreshBtn.addEventListener('click', function () {
   ipc.send('refresh-widget')
@@ -45,14 +43,37 @@ getFonts()
 
 // Id of List item currently active
 let settingsId = 'time'
+let previewText=document.getElementById('preview-text');
+loadData(settingsId)
 
 $('#list-tab a').on('click', function (e) {
   e.preventDefault()
   settingsId = e.target.innerHTML.toLowerCase()
   loadData(settingsId)
 })
-
+var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 function loadData(id){
+  if(conf[id].customFont){
+    var font=new FontFace(conf[id].fontName,`url(${conf[id].fontPath})`)
+    font.load().then(f=>{
+      document.fonts.add(f)
+      
+    })
+  }
+  previewText.style.fontFamily=conf[id].fontName
+  switch (id) {
+    case 'time':
+      previewText.innerHTML=new Date().toLocaleTimeString('en-US');
+      break;
+    case 'day':
+      previewText.innerHTML=days[new Date().getDay()]
+      break;
+    case 'greeting':
+      previewText.innerHTML="Good Morning."
+      break;
+    default:
+      break;
+  }
   document.getElementById('hex_code').value=conf[id].color;
   document.getElementById('font_size').value=conf[id].fontSize;
   console.log(conf[id].color);

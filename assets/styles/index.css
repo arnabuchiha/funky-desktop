@@ -114,3 +114,15 @@ body{
     background-color: var(--color-secondary)!important ;
     color:var(--color-primary)!important;
 }
+.change-preview-bg{
+    position: absolute;
+    right:20px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    /* box-shadow: 0 0 5px #333; */
+}
+.preview{
+    background: url('../icons/Wallpaper.jpg')no-repeat center /cover ;
+    height: 30vh;
+}
