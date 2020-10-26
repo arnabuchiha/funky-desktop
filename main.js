@@ -21,7 +21,8 @@ function createWindow(){
         title:"funkyD",
         // backgroundColor:"rgba(255, 255, 255, 0)",
         webPreferences: {
-          nodeIntegration: true
+          nodeIntegration: true,
+          enableRemoteModule: true
         }
       });
     win.loadURL(url.format({

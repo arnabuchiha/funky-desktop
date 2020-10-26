@@ -117,9 +117,12 @@ body{
 .change-preview-bg{
     position: absolute;
     right:20px;
+    margin-top: 10px;
     cursor: pointer;
     width: 30px;
     height: 30px;
+    background-color: white;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
     /* box-shadow: 0 0 5px #333; */
 }
 .preview{

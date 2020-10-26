@@ -32,10 +32,18 @@
               <div class="tab-content" id="nav-tabContent">
                 <form id="settingsForm">
                     <!-- <div class="row"> -->
-                        <div class="row preview mt-5 mb-5 justify-content-center">
+                        <div id="preview" class="row preview mt-5 mb-5 justify-content-center">
                             
                             <h1 class="align-self-center text-center" id="preview-text">Day</h1>
-                            <img class="change-preview-bg" src="./assets/icons/change-bg-icon.svg" alt="Change Preview Background" data-toggle="tooltip" data-placement="top" title="Change Preview Background">
+                            <input id="background-file" type="file" style="display: none;">
+                            <img class="change-preview-bg" 
+                                src="./assets/icons/change-bg-icon.svg" 
+                                alt="Change Preview Background" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Change Preview Background"
+                                id="change-preview-bg"
+                                >
                         </div>
                         <div class="container">
                         <div class="row">
