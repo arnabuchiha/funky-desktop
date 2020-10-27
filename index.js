@@ -66,13 +66,23 @@ var days = [
   "Friday",
   "Saturday",
 ];
+var color=null
+var fontSize=null
+var fontName=null
 function loadData(id) {
+  let fontPath=null
   if (conf[id].customFont) {
     var font = new FontFace(conf[id].fontName, `url(${conf[id].fontPath})`);
     font.load().then((f) => {
       document.fonts.add(f);
+      fontPath=fontPath
     });
   }
+  fontName= conf[id].fontName
+  color=conf[id].color
+  fontSize=conf[id].fontSize
+  previewText.style.color=color
+  previewText.style.fontSize=fontSize
   previewText.style.fontFamily = conf[id].fontName;
   switch (id) {
     case "time":
@@ -97,41 +107,67 @@ document
     e.preventDefault();
     document.getElementById('background-file').click()
   });
-  document.getElementById('background-file').addEventListener('change',function(e){
-    settings.set('preview-bg-path',e.target.files[0].path)
-    document.getElementById('preview').style.background=`url(${e.target.files[0].path})no-repeat center /cover`
-  })
+document.getElementById('background-file').addEventListener('change',function(e){
+  e.preventDefault()
+  settings.set('preview-bg-path',e.target.files[0].path)
+  document.getElementById('preview').style.background=`url(${e.target.files[0].path})no-repeat center /cover`
+})
+document.getElementById('hex_code').addEventListener('change',function(e){
+  e.preventDefault()
+  
+  color=e.target.value
+  previewText.style.color=color
+})
+document.getElementById('font_size').addEventListener('change',function(e){
+  fontSize=e.target.value
+})
+document.getElementById('fontsList').addEventListener('change',function(e){
+  fontName=e.target.value
+  previewText.style.fontFamily=fontName;
+  fontPath=null
+})
+document.getElementById('customFont').addEventListener('change',function(e){
+  fontPath=e.target.files[0].path
+  fontName=fontkit.openSync(fontPath).fullName
+  var font = new FontFace(fontName, `url(${fontPath})`);
+    font.load().then((f) => {
+      document.fonts.add(f);
+      fontPath=fontPath
+    });
+  previewText.style.fontFamily=fontName;
+})
 document
   .getElementById("settingsForm")
   .addEventListener("submit", function (e) {
     e.preventDefault();
-    const color = document.getElementById("hex_code").value;
-    const fontSize = parseInt(document.getElementById("font_size").value);
+    const colorFinal = color;
+    const fontSizeFinal = parseInt(fontSize);
 
-    document.getElementById("error").style.display = "none";
-    let filePath = null;
-    let fontName = null;
+    let filePathFinal = null;
+    let fontNameFinal = null;
     try {
-      filePath = document.getElementById("customFont").files[0].path;
+      // filePath = document.getElementById("customFont").files[0].path;
+      filePathFinal=fontPath
     } catch (err) {
-      filePath = null;
+      filePathFinal = null;
     }
-    if (filePath == null) {
-      fontName = document.getElementById("fontsList").value;
+    if (filePathFinal == null) {
+      // fontName = document.getElementById("fontsList").value;
+      fontNameFinal=fontName
     }
-    if (filePath != null) {
-      var font = fontkit.openSync(filePath);
+    if (filePathFinal != null) {
+      var font = fontkit.openSync(filePathFinal);
       conf[settingsId].fontName = font.fullName;
       conf[settingsId].customFont = true;
       conf[settingsId].fontPath = path.join(
         configPath,
-        "CustomPath" + settingsId + path.parse(filePath).ext
+        "CustomPath" + settingsId + path.parse(filePathFinal).ext
       );
       fs.copyFileSync(
-        filePath,
+        filePathFinal,
         path.join(
           configPath,
-          "CustomPath" + settingsId + path.parse(filePath).ext
+          "CustomPath" + settingsId + path.parse(filePathFinal).ext
         ),
         function (err) {
           if (err) {
@@ -140,12 +176,12 @@ document
         }
       );
     } else {
-      conf[settingsId].fontName = fontName;
+      conf[settingsId].fontName = fontNameFinal;
       conf[settingsId].customFont = false;
       conf[settingsId].fontPath = null;
     }
-    conf[settingsId].color = color;
-    conf[settingsId].fontSize = fontSize;
+    conf[settingsId].color = colorFinal;
+    conf[settingsId].fontSize = fontSizeFinal;
     console.log(conf);
 
     fs.writeFileSync(

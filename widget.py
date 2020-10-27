@@ -84,7 +84,7 @@ class MainWindow(QWidget):
         fontSize=int(fontSize)
         label.setStyleSheet("""
         QLabel#%s{
-            background-color: black;
+            background-color: transparent;
             color:%s;
             font-size:%dpx;
             alignment:center;
