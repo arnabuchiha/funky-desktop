@@ -5,11 +5,16 @@ const ipc = electron.ipcRenderer;
 const fontkit = require("fontkit");
 const refreshBtn = document.getElementById("refresh");
 const settings = require("electron-settings");
+const fontList = require("font-list");
+const {dialog} =require('electron').remote
+const archiver = require('archiver');
+const extract = require('extract-zip');
+
 refreshBtn.addEventListener("click", function () {
   ipc.send("refresh-widget");
 });
-const fontList = require("font-list");
 ipc.send("requestPath");
+
 let conf = {
   time: {},
   day: {},
@@ -23,9 +28,18 @@ ipc.on("sendPath", (event, arg) => {
   );
   loadData("time");
 });
+
+//Preview Background settings
+
 var x = settings.getSync("preview-bg-path");
 if (x == undefined) x = "./assets/icons/change-bg-icon.svg";
-document.getElementById('preview').style.background=`url(${x})no-repeat center /cover`
+document.getElementById(
+  "preview"
+).style.background = `url(${x})no-repeat center /cover`;
+
+
+//Get system fonts and append in select
+
 async function getFonts() {
   var temp = document.getElementById("fontsList");
   fontList
@@ -66,23 +80,26 @@ var days = [
   "Friday",
   "Saturday",
 ];
-var color=null
-var fontSize=null
-var fontName=null
+var color = null;
+var fontSize = null;
+var fontName = null;
+
+//Load Data from configuration file to respective fields
+
 function loadData(id) {
-  let fontPath=null
+  let fontPath = null;
   if (conf[id].customFont) {
     var font = new FontFace(conf[id].fontName, `url(${conf[id].fontPath})`);
     font.load().then((f) => {
       document.fonts.add(f);
-      fontPath=fontPath
+      fontPath = fontPath;
     });
   }
-  fontName= conf[id].fontName
-  color=conf[id].color
-  fontSize=conf[id].fontSize
-  previewText.style.color=color
-  previewText.style.fontSize=fontSize
+  fontName = conf[id].fontName;
+  color = conf[id].color;
+  fontSize = conf[id].fontSize;
+  previewText.style.color = color;
+  previewText.style.fontSize = fontSize;
   previewText.style.fontFamily = conf[id].fontName;
   switch (id) {
     case "time":
@@ -101,41 +118,57 @@ function loadData(id) {
   document.getElementById("font_size").value = conf[id].fontSize;
   console.log(conf[id].color);
 }
+
+//Change event listeners
+
 document
   .getElementById("change-preview-bg")
   .addEventListener("click", function (e) {
     e.preventDefault();
-    document.getElementById('background-file').click()
+    document.getElementById("background-file").click();
   });
-document.getElementById('background-file').addEventListener('change',function(e){
-  e.preventDefault()
-  settings.set('preview-bg-path',e.target.files[0].path)
-  document.getElementById('preview').style.background=`url(${e.target.files[0].path})no-repeat center /cover`
-})
-document.getElementById('hex_code').addEventListener('change',function(e){
-  e.preventDefault()
-  
-  color=e.target.value
-  previewText.style.color=color
-})
-document.getElementById('font_size').addEventListener('change',function(e){
-  fontSize=e.target.value
-})
-document.getElementById('fontsList').addEventListener('change',function(e){
-  fontName=e.target.value
-  previewText.style.fontFamily=fontName;
-  fontPath=null
-})
-document.getElementById('customFont').addEventListener('change',function(e){
-  fontPath=e.target.files[0].path
-  fontName=fontkit.openSync(fontPath).fullName
+
+document
+  .getElementById("background-file")
+  .addEventListener("change", function (e) {
+    e.preventDefault();
+    settings.set("preview-bg-path", e.target.files[0].path);
+    document.getElementById(
+      "preview"
+    ).style.background = `url(${e.target.files[0].path})no-repeat center /cover`;
+  });
+
+document.getElementById("hex_code").addEventListener("change", function (e) {
+  e.preventDefault();
+
+  color = e.target.value;
+  previewText.style.color = color;
+});
+
+document.getElementById("font_size").addEventListener("change", function (e) {
+  fontSize = e.target.value;
+});
+
+document.getElementById("fontsList").addEventListener("change", function (e) {
+  fontName = e.target.value;
+  previewText.style.fontFamily = fontName;
+  fontPath = null;
+});
+
+document.getElementById("customFont").addEventListener("change", function (e) {
+  fontPath = e.target.files[0].path;
+  fontName = fontkit.openSync(fontPath).fullName;
   var font = new FontFace(fontName, `url(${fontPath})`);
-    font.load().then((f) => {
-      document.fonts.add(f);
-      fontPath=fontPath
-    });
-  previewText.style.fontFamily=fontName;
-})
+  font.load().then((f) => {
+    document.fonts.add(f);
+    fontPath = fontPath;
+  });
+  previewText.style.fontFamily = fontName;
+});
+
+
+//Submit data and apply to widget
+
 document
   .getElementById("settingsForm")
   .addEventListener("submit", function (e) {
@@ -147,13 +180,13 @@ document
     let fontNameFinal = null;
     try {
       // filePath = document.getElementById("customFont").files[0].path;
-      filePathFinal=fontPath
+      filePathFinal = fontPath;
     } catch (err) {
       filePathFinal = null;
     }
     if (filePathFinal == null) {
       // fontName = document.getElementById("fontsList").value;
-      fontNameFinal=fontName
+      fontNameFinal = fontName;
     }
     if (filePathFinal != null) {
       var font = fontkit.openSync(filePathFinal);
@@ -188,5 +221,55 @@ document
       path.join(configPath, "config.json"),
       JSON.stringify(conf)
     );
+
+    //Restart the widget
+
     ipc.send("refresh-widget");
   });
+
+
+document.getElementById('load_theme').addEventListener('change',function loadTheme(e){
+  var src=e.target.files[0].path
+  if(path.extname(src)=='.fdskin'){
+    $('.toast').toast('hide');
+    
+    try {
+      extract(src, { dir: configPath }).then(e=>console.log(e))
+      document.getElementById('toast-msg').innerHTML="Load success!!"
+      $('.toast').toast('show')
+    } catch (err) {
+      document.getElementById('toast-msg').innerHTML="Something went wrong"
+      $('.toast').toast('show')
+    }
+  }
+  else{
+    document.getElementById('toast-msg').innerHTML="Select a '.fdskin' file'!!"
+    $('.toast').toast('show');
+    
+    console.log('Wrong File')
+  }
+})
+
+document.getElementById('export_theme').addEventListener('click',function(e){
+  dialog.showSaveDialog({
+    properties:['openDirectory']
+  }).then(path=>{
+    if(path!=undefined){
+      const output=fs.createWriteStream(path.filePath+'.fdskin')
+      const src=configPath
+      output.on('close', function () {
+        console.log(archive.pointer() + ' total bytes');
+        console.log('archiver has been finalized and the output file descriptor has closed.');
+      });
+      const archive=archiver('zip',{
+        zlib:{level:9}
+      })
+      archive.pipe(output)
+      archive.directory(src,false)
+      archive.finalize()
+      // asar.createPackage(src,output)
+    }
+    
+    
+  })
+})

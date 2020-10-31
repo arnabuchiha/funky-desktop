@@ -11,13 +11,22 @@
         <script>require('bootstrap')</script>
     </head>
     <body>
-        
+        <div class="toast" data-delay="5000" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute;top: 0; right: 0; z-index:1;margin-top: 10px;margin-right: 10px;">
+            <div class="toast-header">
+                <strong id="toast-msg" class="mr-auto">Error</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
         
         <img id="logo" src="./logo.png"/>
+        
         <div class="multi-button">
-            <button>Load</button>
+            <input type="file" id="load_theme" style="display: none;">
+            <button onclick="event.preventDefault();document.getElementById('load_theme').click()" >Load</button>
             <button id="refresh">Refresh</button>
-            <button>Export</button>
+            <button id="export_theme">Export</button>
         </div>
         <div class="row row-settings">
             <div class="col-4">
@@ -67,43 +76,7 @@
                                     <button class="w-100 update-btn" type="submit">Update</button>
                                 </div>
                         </div>
-                    </div>
-                        <!-- <div class="form-group col-6">
-                            <label for="exampleFormControlSelect1">Select font</label>
-                            <select name="fontName" class="form-control" id="fontsList">
-                            </select>
                         </div>
-                        <div class="form-group col">
-                            <label for="exampleFormControlFile1">Custom Font</label>
-                            <input name="font_file" type="file" class="form-control-file" id="customFont">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="coordinates">Coordinates</label>
-                        <div class="row">
-                            <input name="x-coord" type="text" class="form-control col" id="x-coord" placeholder="x">
-                            <input name="y-coord" type="text" class="form-control col" id="y-coord" placeholder="y">
-                        </div>
-                        
-                    </div>
-                    <div class="form-group">
-                        <label for="color">Color</label>
-                        <input type="color" id="hex_code" onchange="clickColor(0, -1, -1, 5)" value="#ffffff" style="width:25%;">                        
-                    </div>
-                    <div class="form-group">
-                        <label for="color">Font Size</label>
-                        <input name="font_size" type="text" class="form-control col" id="font_size" placeholder="50px">
-                        
-                    </div>
-                    <div class="form-check">
-                        <input name="visibility" class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                        Show
-                        </label>
-                    </div>
-                    <div class="alert alert-danger" style="display: none;" id="error">
-                        
-                    </div> -->
                     
                 </form>
               </div>
