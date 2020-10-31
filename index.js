@@ -227,29 +227,43 @@ document
     ipc.send("refresh-widget");
   });
 
-
-document.getElementById('load_theme').addEventListener('change',function loadTheme(e){
-  var src=e.target.files[0].path
-  if(path.extname(src)=='.fdskin'){
-    $('.toast').toast('hide');
-    
-    try {
-      extract(src, { dir: configPath }).then(e=>console.log(e))
-      document.getElementById('toast-msg').innerHTML="Load success!!"
-      $('.toast').toast('show')
-    } catch (err) {
-      document.getElementById('toast-msg').innerHTML="Something went wrong"
-      $('.toast').toast('show')
+//Load theme
+document.getElementById('load_theme').addEventListener('click',function loadTheme(e){
+  dialog.showOpenDialog({
+    properties:['openFile']
+  }).then(fpath=>{
+    var src=fpath.filePaths[0]
+    if(src==undefined)return
+    console.log(src)
+    // var src=e.target.files[0].path
+    if(path.extname(src)=='.fdskin'){
+      $('.toast').toast('hide');
+      
+      try {
+        extract(src, { dir: configPath }).then(x=>{
+          conf = JSON.parse(
+            fs.readFileSync(path.join(configPath, "config.json"), "utf-8")
+          );
+        })
+        document.getElementById('toast-msg').innerHTML="Load success!!"
+        $('.toast').toast('show')
+        ipc.send('refresh-widget')
+        loadData(settingsId);
+      } catch (err) {
+        document.getElementById('toast-msg').innerHTML="Something went wrong"
+        $('.toast').toast('show')
+      }
     }
-  }
-  else{
-    document.getElementById('toast-msg').innerHTML="Select a '.fdskin' file'!!"
-    $('.toast').toast('show');
-    
-    console.log('Wrong File')
-  }
+    else{
+      document.getElementById('toast-msg').innerHTML="Select a '.fdskin' file'!!"
+      $('.toast').toast('show');
+      
+      console.log('Wrong File')
+    }})
 })
 
+
+//Export theme
 document.getElementById('export_theme').addEventListener('click',function(e){
   dialog.showSaveDialog({
     properties:['openDirectory']
