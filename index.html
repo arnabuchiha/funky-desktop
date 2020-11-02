@@ -58,19 +58,23 @@
                         <div class="row">
                                 <div class="col btn-group dropup">
                                     <button style="height: fit-content;" onclick="event.preventDefault();" class="dropdown-toggle w-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Font</button>
-                                    <div class="dropdown-menu">
-                                        <select name="fontName" class="form-control dropdown-item" id="fontsList">
+                                    <div class="dropdown-menu pl-2 pr-2">
+                                        <select name="fontName" class="form-control" id="fontsList">
                                         </select>
                                         <input name="font_file" type="file" class="form-control-file dropdown-item" id="customFont">
-                                        <input name="font_size" type="text" class="form-control dropdown-item" id="font_size" placeholder="50px">
+                                        <input name="font_size" type="text" class="form-control " id="font_size" placeholder="50px">
                                     </div>
                                 </div>
                                 <div class="col">
                                     <button class="w-100" onclick="event.preventDefault();document.getElementById('hex_code').click();">Color</button>
                                     <input type="color" id="hex_code" value="#ffffff" style="width:25%;visibility: hidden;">
                                 </div>
-                                <div class="col">
-                                    <button class="w-100">Position</button>
+                                <div class="col dropup">
+                                    <button style="height: fit-content;" onclick="event.preventDefault();" class="dropdown-toggle w-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Position</button>
+                                    <div class="dropdown-menu pl-2 pr-2">
+                                        <input name="x" type="text" class="form-control" id="x-axis">
+                                        <input name="y" type="text" class="form-control" id="y-axis">
+                                    </div>
                                 </div>
                                 <div class="col">
                                     <button class="w-100 update-btn" type="submit">Update</button>

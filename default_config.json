@@ -7,7 +7,7 @@
         "fontSize":"50",
         "coordinate":{
             "default":true,
-            "x":null,
+            "x":0,
             "y":null
         }
     },
@@ -19,7 +19,7 @@
         "fontSize":"50",
         "coordinate":{
             "default":true,
-            "x":null,
+            "x":0,
             "y":null
         }
     },
@@ -31,7 +31,7 @@
         "fontSize":"50",
         "coordinate":{
             "default":true,
-            "x":null,
+            "x":0,
             "y":null
         }
     },
@@ -43,7 +43,7 @@
         "fontSize":"50",
         "coordinate":{
             "default":true,
-            "x":null,
+            "x":0,
             "y":null
         }
     }

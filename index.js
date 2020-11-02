@@ -64,7 +64,7 @@ getFonts();
 // Id of List item currently active
 let settingsId = "time";
 let previewText = document.getElementById("preview-text");
-loadData(settingsId);
+// loadData(settingsId);
 
 $("#list-tab a").on("click", function (e) {
   e.preventDefault();
@@ -83,7 +83,9 @@ var days = [
 var color = null;
 var fontSize = null;
 var fontName = null;
-
+var xAxis=null;
+var yAxis=null;
+var defaultcoordinate=true;
 //Load Data from configuration file to respective fields
 
 function loadData(id) {
@@ -98,6 +100,9 @@ function loadData(id) {
   fontName = conf[id].fontName;
   color = conf[id].color;
   fontSize = conf[id].fontSize;
+  xAxis=conf[id].coordinate.x;
+  yAxis=conf[id].coordinate.y;
+  defaultcoordinate=conf[id].coordinate.default;
   previewText.style.color = color;
   previewText.style.fontSize = fontSize;
   previewText.style.fontFamily = conf[id].fontName;
@@ -116,7 +121,8 @@ function loadData(id) {
   }
   document.getElementById("hex_code").value = conf[id].color;
   document.getElementById("font_size").value = conf[id].fontSize;
-  console.log(conf[id].color);
+  document.getElementById('x-axis').value=xAxis;
+  document.getElementById('y-axis').value=yAxis;
 }
 
 //Change event listeners
@@ -166,6 +172,14 @@ document.getElementById("customFont").addEventListener("change", function (e) {
   previewText.style.fontFamily = fontName;
 });
 
+document.getElementById("x-axis").addEventListener('change',function(e){
+  xAxis=e.target.value;
+  defaultcoordinate=false;
+})
+document.getElementById("y-axis").addEventListener('change',function(e){
+  yAxis=e.target.value;
+  defaultcoordinate=false;
+})
 
 //Submit data and apply to widget
 
@@ -215,6 +229,11 @@ document
     }
     conf[settingsId].color = colorFinal;
     conf[settingsId].fontSize = fontSizeFinal;
+    if(!defaultcoordinate){
+      conf[settingsId].coordinate.x=xAxis;
+      conf[settingsId].coordinate.y=yAxis;
+      conf[settingsId].coordinate.default=false
+    }
     console.log(conf);
 
     fs.writeFileSync(
