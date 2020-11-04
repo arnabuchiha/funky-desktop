@@ -39,7 +39,7 @@ class MainWindow(QWidget):
         # self.layout().addWidget(self.timeLabel,1,0)
         # self.layout().addWidget(self.cpuLabel)
         # self.center()
-        # self.layout().setSizeConstraint(QLayout.SetMinimumSize)
+        # self.layout().setSizeConstrafloat(QLayout.SetMinimumSize)
         # self.customPostition()
         
         #Works with X11 enable system like linux and macOS
@@ -60,7 +60,7 @@ class MainWindow(QWidget):
         sg = QDesktopWidget().screenGeometry()
         
         widget = self.geometry()
-        print(widget.width()/2)
+        prfloat(widget.width()/2)
         x = ag.width()//2 -(widget.width()//2)
         y = ag.height()//2 -(widget.height()//2)
         self.move(x, y)
@@ -85,7 +85,7 @@ class MainWindow(QWidget):
     def labelStyles(self,label,id):
         color=self.confData[id]["color"]
         fontSize=self.confData[id]["fontSize"]
-        fontSize=int(fontSize)
+        fontSize=float(fontSize)
         label.setStyleSheet("""
         QLabel#%s{
             background-color: transparent;
@@ -118,7 +118,7 @@ class MainWindow(QWidget):
             self.customPostition(self.greetingLabel,beta=-beta)
             self.confData["greeting"]["coordinate"]["y"]=-beta
         else:
-            self.customPostition(self.greetingLabel,int(self.confData["greeting"]["coordinate"]["x"]),int(self.confData["greeting"]["coordinate"]["y"]))
+            self.customPostition(self.greetingLabel,float(self.confData["greeting"]["coordinate"]["x"]),float(self.confData["greeting"]["coordinate"]["y"]))
         self.betas.append(height/2+beta)
     
     def day(self):
@@ -130,7 +130,7 @@ class MainWindow(QWidget):
             self.customPostition(self.dayLabel)
             self.confData["day"]["coordinate"]["y"]=0
         else:
-            self.customPostition(self.dayLabel,int(self.confData["day"]["coordinate"]["x"]),int(self.confData["day"]["coordinate"]["y"]))
+            self.customPostition(self.dayLabel,float(self.confData["day"]["coordinate"]["x"]),float(self.confData["day"]["coordinate"]["y"]))
         self.betas.append(self.labelHeight(self.dayLabel)/2)
         # self.dayLabel.move((self.width//2)-200,self.height//2)
     def time(self):
@@ -147,7 +147,7 @@ class MainWindow(QWidget):
             self.customPostition(self.timeLabel,beta=-beta)
             self.confData["time"]["coordinate"]["y"]=-beta
         else:
-            self.customPostition(self.timeLabel,int(self.confData["time"]["coordinate"]["x"]),int(self.confData["time"]["coordinate"]["y"]))
+            self.customPostition(self.timeLabel,float(self.confData["time"]["coordinate"]["x"]),float(self.confData["time"]["coordinate"]["y"]))
         self.betas.append(height/2+beta)
     def cpu_usage(self):
         self.cpuLabel=QLabel(str(psutil.cpu_percent())+"%",self)

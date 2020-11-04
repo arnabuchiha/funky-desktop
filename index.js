@@ -85,16 +85,16 @@ var fontSize = null;
 var fontName = null;
 var xAxis=null;
 var yAxis=null;
+var fontPath=null;
 var defaultcoordinate=true;
 //Load Data from configuration file to respective fields
 
 function loadData(id) {
-  let fontPath = null;
   if (conf[id].customFont) {
     var font = new FontFace(conf[id].fontName, `url(${conf[id].fontPath})`);
     font.load().then((f) => {
       document.fonts.add(f);
-      fontPath = fontPath;
+      fontPath = conf[id].fontPath;
     });
   }
   fontName = conf[id].fontName;
@@ -173,7 +173,7 @@ document.getElementById("customFont").addEventListener("change", function (e) {
 });
 
 document.getElementById("x-axis").addEventListener('change',function(e){
-  xAxis=e.target.value;
+  xAxis=-e.target.value;
   defaultcoordinate=false;
 })
 document.getElementById("y-axis").addEventListener('change',function(e){
@@ -204,24 +204,26 @@ document
     }
     if (filePathFinal != null) {
       var font = fontkit.openSync(filePathFinal);
-      conf[settingsId].fontName = font.fullName;
-      conf[settingsId].customFont = true;
-      conf[settingsId].fontPath = path.join(
-        configPath,
-        "CustomPath" + settingsId + path.parse(filePathFinal).ext
-      );
-      fs.copyFileSync(
-        filePathFinal,
-        path.join(
+      if(font.fullName!=conf[settingsId].fontName){
+        conf[settingsId].fontName = font.fullName;
+        conf[settingsId].customFont = true;
+        conf[settingsId].fontPath = path.join(
           configPath,
           "CustomPath" + settingsId + path.parse(filePathFinal).ext
-        ),
-        function (err) {
-          if (err) {
-            console.error(err);
+        );
+        fs.copyFileSync(
+          filePathFinal,
+          path.join(
+            configPath,
+            "CustomPath" + settingsId + path.parse(filePathFinal).ext
+          ),
+          function (err) {
+            if (err) {
+              console.error(err);
+            }
           }
-        }
-      );
+        );
+      }
     } else {
       conf[settingsId].fontName = fontNameFinal;
       conf[settingsId].customFont = false;
