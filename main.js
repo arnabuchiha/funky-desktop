@@ -16,9 +16,11 @@ function createWindow(){
     win=new BrowserWindow({
         width: 800,
         height: 650,
-        frame:true,
+        frame:false,
+        icon:'./assets/icons/icon.ico',
+        titleBarStyle: "hidden",
         // transparent:true,
-        title:"funkyD",
+        // title:"funkyD",
         // backgroundColor:"rgba(255, 255, 255, 0)",
         webPreferences: {
           nodeIntegration: true,
@@ -86,6 +88,8 @@ try{
 catch(err){
   console.error(err);
 }
+
+
 //Add App to StartUp
 var funkyDLauncher=new AutoLaunch({
   name:'funkyD',
@@ -102,24 +106,24 @@ console.log(app.getPath("appData"))
 // }
 
 
-if(process.platform=='linux'){
+
   // cp.exec(".\\dist\\widget\\widget.exe");
-  console.log(app.getPath("userData"))
-  app.whenReady().then(createWindow)
-  child=spawn('python',['widget.py',confPath]);
-    child.on('close', (code, signal) => {
-      console.log(
-        `child process terminated due to receipt of signal ${code}`);
-        // child.kill('SIGTERM');
-    });
-  // Send SIGTERM to process
-  
-  // cp.exec("python widget.py --path="+app.getPath("userData"));
-  process.on('exit',function(){
-    console.log('Closed')
-    child.kill('SIGTERM');
-  })
-}
+console.log(app.getPath("userData"))
+app.whenReady().then(createWindow)
+child=spawn('python',['widget.py',confPath]);
+  child.on('close', (code, signal) => {
+    console.log(
+      `child process terminated due to receipt of signal ${code}`);
+      // child.kill('SIGTERM');
+  });
+// Send SIGTERM to process
+
+// cp.exec("python widget.py --path="+app.getPath("userData"));
+process.on('exit',function(){
+  console.log('Closed')
+  child.kill('SIGTERM');
+})
+
 
 
 ipc.on('refresh-widget',function(){

@@ -1,14 +1,26 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow,QDesktopWidget,QWidget,QVBoxLayout,QGridLayout,QLayout
-from PyQt5.QtCore import Qt,QTimer,QDateTime,QTime,QDate,QRectF
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow,QDesktopWidget,QWidget,QVBoxLayout,QGridLayout,QLayout,QGraphicsOpacityEffect
+from PyQt5.QtCore import Qt,QTimer,QDateTime,QTime,QDate,QRectF,QEvent
 from PyQt5 import QtGui
 import datetime
 import json
 import os
 import psutil
+
+
 now = datetime.datetime.now()
 class MainWindow(QWidget):
-
+    def hideEvent(self, event):
+        if event.spontaneous():
+            print("asdasd")
+            self.showNormal()
+    def changeEvent(self, event):
+        print(event,event.type())
+        if(event.type() == QEvent.WindowStateChange and 
+            event.spontaneous() and 
+            self.windowState() == Qt.WindowMinimized):
+                print("asdas")
+                self.showNormal()
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setWindowTitle("funkyD Widget")
@@ -19,9 +31,9 @@ class MainWindow(QWidget):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setStyleSheet("background:transparent;")
         if(sys.platform=='win32'):
-            flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint|Qt.Tool|Qt.X11BypassWindowManagerHint)
+            flags = Qt.WindowFlags(Qt.FramelessWindowHint |Qt.Tool)
         else:
-            flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint|Qt.WindowTransparentForInput)
+            flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowTransparentForInput|Qt.WindowStaysOnBottomHint)
         self.setWindowFlags(flags)
 
         #Load Configuration json file
@@ -44,7 +56,7 @@ class MainWindow(QWidget):
         
         #Works with X11 enable system like linux and macOS
         # self.setAttribute(Qt.WindowTransparentForInput)
-        self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop)
+        self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop,True)
         #Qt.WA_NoSystemBackground|Qt.AA_EnableHighDpiScaling
         
         # self.setAttribute(Qt.WA_ShowWithoutActivating)
@@ -60,7 +72,7 @@ class MainWindow(QWidget):
         sg = QDesktopWidget().screenGeometry()
         
         widget = self.geometry()
-        prfloat(widget.width()/2)
+        print(widget.width()/2)
         x = ag.width()//2 -(widget.width()//2)
         y = ag.height()//2 -(widget.height()//2)
         self.move(x, y)
@@ -85,6 +97,7 @@ class MainWindow(QWidget):
     def labelStyles(self,label,id):
         color=self.confData[id]["color"]
         fontSize=self.confData[id]["fontSize"]
+        opacity=self.confData[id]["opacity"]
         fontSize=float(fontSize)
         label.setStyleSheet("""
         QLabel#%s{
@@ -100,6 +113,9 @@ class MainWindow(QWidget):
         your_ttf_font = QtGui.QFont(self.confData[id]["fontName"],fontSize)
         label.setFont(your_ttf_font)
         label.adjustSize()
+        opacity_effect =QGraphicsOpacityEffect()
+        opacity_effect.setOpacity(opacity) 
+        label.setGraphicsEffect(opacity_effect)
 
     def greeting(self):
         greeting=""
@@ -137,6 +153,8 @@ class MainWindow(QWidget):
         self.timeLabel=QLabel(now.strftime("%I:%M:%S"),self)
         self.timeLabel.setObjectName("time")
         self.labelStyles(self.timeLabel,"time")
+        
+        self.timeLabel.stackUnder(self.dayLabel)
         self.timer = QTimer(self)
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.setTime)
@@ -163,6 +181,17 @@ class MainWindow(QWidget):
 
 app = QApplication(sys.argv)
 
+
+if os.environ.get('DISPLAY'):
+    print(os.environ.get('DISPLAY'))
 window = MainWindow()
 window.show()
+
+if sys.platform=='win32':
+    from ctypes import windll
+    import win32gui,win32con
+    win32gui.SetWindowPos(window.winId(),win32con.HWND_BOTTOM, 0,0,0,0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE  | win32con.SWP_NOACTIVATE )
+
+    hwnd=win32gui.GetWindow(win32gui.GetWindow(windll.user32.GetTopWindow(0),win32con.GW_HWNDLAST),win32con.GW_CHILD);
+    win32gui.SetWindowLong(window.winId(),win32con.GWL_HWNDPARENT,hwnd)
 sys.exit(app.exec_())

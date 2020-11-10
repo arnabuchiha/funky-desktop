@@ -9,7 +9,54 @@ const fontList = require("font-list");
 const {dialog} =require('electron').remote
 const archiver = require('archiver');
 const extract = require('extract-zip');
+const customTitlebar = require('custom-electron-titlebar');
+const { Themebar } = require("custom-electron-titlebar");
+const { Menu,MenuItem } = require("electron").remote;
 
+const titlebar=new customTitlebar.Titlebar({
+  backgroundColor: customTitlebar.Color.fromHex('#33364d'),
+  icon:'./assets/icons/icon.ico',
+  shadow: true,
+  iconsTheme:Themebar.mac
+});
+const menu = Menu.getApplicationMenu();
+menu.append(new MenuItem({
+	label: 'Item 1',
+	submenu: [
+		{
+			label: 'Subitem 1',
+			click: () => console.log('Click on subitem 1')
+		},
+		{
+			type: 'separator'
+		}
+	]
+}));
+console.log(menu.items)
+menu.items.splice(1, 1);
+menu.append(new MenuItem({
+	label: 'Item 2',
+	submenu: [
+		{
+			label: 'Subitem checkbox',
+			type: 'checkbox',
+			checked: true
+		},
+		{
+			type: 'separator'
+		},
+		{
+			label: 'Subitem with submenu',
+			submenu: [
+				{
+					label: 'Submenu &item 1',
+					accelerator: 'Ctrl+T'
+				}
+			]
+		}
+	]
+}));
+titlebar.updateMenu(menu)
 refreshBtn.addEventListener("click", function () {
   ipc.send("refresh-widget");
 });
@@ -32,10 +79,11 @@ ipc.on("sendPath", (event, arg) => {
 //Preview Background settings
 
 var x = settings.getSync("preview-bg-path");
-if (x == undefined) x = "./assets/icons/change-bg-icon.svg";
+if (x == undefined) x = "./assets/icons/Wallpaper.jpg";
+console.log(x)
 document.getElementById(
   "preview"
-).style.background = `url(${x})no-repeat center /cover`;
+).style.background = `url('${x}') no-repeat center /cover`;
 
 
 //Get system fonts and append in select
@@ -96,6 +144,10 @@ function loadData(id) {
       document.fonts.add(f);
       fontPath = conf[id].fontPath;
     });
+    
+  }
+  else{
+    fontPath=null
   }
   fontName = conf[id].fontName;
   color = conf[id].color;
@@ -138,10 +190,12 @@ document
   .getElementById("background-file")
   .addEventListener("change", function (e) {
     e.preventDefault();
-    settings.set("preview-bg-path", e.target.files[0].path);
+    var bgpath=e.target.files[0].path.replace(/\\/g, "/")
+    settings.set("preview-bg-path", bgpath);
+    console.log(bgpath)
     document.getElementById(
       "preview"
-    ).style.background = `url(${e.target.files[0].path})no-repeat center /cover`;
+    ).style.background = `url('${bgpath}') no-repeat center /cover`;
   });
 
 document.getElementById("hex_code").addEventListener("change", function (e) {
@@ -164,7 +218,7 @@ document.getElementById("fontsList").addEventListener("change", function (e) {
 document.getElementById("customFont").addEventListener("change", function (e) {
   fontPath = e.target.files[0].path;
   fontName = fontkit.openSync(fontPath).fullName;
-  var font = new FontFace(fontName, `url(${fontPath})`);
+  var font = new FontFace(fontName, `url('${fontPath}')`);
   font.load().then((f) => {
     document.fonts.add(f);
     fontPath = fontPath;

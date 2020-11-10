@@ -9,6 +9,9 @@
     --shadow: rgba(0, 0, 0, 0.1);
     --space: 1rem;
   }
+  .titlebar{
+      font-family: monospace;
+  }
 .time{
     font-size: 20px;
     color:black;

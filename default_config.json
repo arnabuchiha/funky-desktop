@@ -4,6 +4,7 @@
         "customFont":false,
         "fontPath":null,
         "color":"#ffffff",
+        "opacity":0.9,
         "fontSize":"50",
         "coordinate":{
             "default":true,
@@ -16,6 +17,7 @@
         "customFont":false,
         "fontPath":null,
         "color":"#ffffff",
+        "opacity":1,
         "fontSize":"50",
         "coordinate":{
             "default":true,
@@ -28,6 +30,7 @@
         "customFont":false,
         "fontPath":null,
         "color":"#ffffff",
+        "opacity":1,
         "fontSize":"50",
         "coordinate":{
             "default":true,
@@ -40,6 +43,7 @@
         "customFont":false,
         "fontPath":null,
         "color":"#ffffff",
+        "opacity":1,
         "fontSize":"50",
         "coordinate":{
             "default":true,
