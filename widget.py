@@ -10,17 +10,14 @@ import psutil
 
 now = datetime.datetime.now()
 class MainWindow(QWidget):
-    def hideEvent(self, event):
-        if event.spontaneous():
-            print("asdasd")
-            self.showNormal()
+
+    #Check if widget was minimized and restore it
     def changeEvent(self, event):
         print(event,event.type())
-        if(event.type() == QEvent.WindowStateChange and 
-            event.spontaneous() and 
-            self.windowState() == Qt.WindowMinimized):
-                print("asdas")
-                self.showNormal()
+        print(self.windowState())
+        print(Qt.WindowMinimized)
+        if(event.type() == QEvent.WindowStateChange) and self.windowState() & Qt.WindowMinimized:
+            self.setWindowState(Qt.WindowActive)
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setWindowTitle("funkyD Widget")
